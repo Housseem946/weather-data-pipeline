@@ -1,0 +1,23 @@
+Etapes à Suivre pour lancer le Projet 
+
+--> Configuerer votre docker COmppose
+--> Lancer astro dev start, Ui airflow accessible 
+--> Lancer docker compose up -d postgres pgadmin : 
+
+        - Aller sur http://localhost:5050
+        - login : admin@admin.com / admin.
+
+        - Ajouter un Server :
+
+            Hostname : postgres
+
+            User : airflow
+
+            Password : airflow
+
+            Database : weather_db
+
+        --> Ça te permettra de voir la base se remplir quand le DAG tournera.
+
+--> Connexion de la base dans l'UI Airflow (pour le DAG)
+--> Tester la connexion avec le scrpit sous le fichier_postgre_conn

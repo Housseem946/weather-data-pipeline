@@ -1,0 +1,6 @@
+requests
+psycopg2-binary
+dbt-core
+dbt-postgres
+apache-airflow-providers-postgres
+apache-airflow-providers-common-sql

@@ -1,0 +1,8 @@
+version: "3"
+services:
+  scheduler:
+    environment:
+      - WEATHERSTACK_API_KEY=${WEATHERSTACK_API_KEY}
+  webserver:
+    environment:
+      - WEATHERSTACK_API_KEY=${WEATHERSTACK_API_KEY}

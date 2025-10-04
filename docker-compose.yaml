@@ -1,0 +1,36 @@
+name: weather-pipeline
+
+services:
+  # === Base de données PostgreSQL ===
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: airflow # à changer yaa houmaa
+      POSTGRES_PASSWORD: airflow  # à changer yaa houmaa
+      POSTGRES_DB: weather_db  # à changer yaa houmaa 
+    ports: 
+      - "5433:5432"   # à changer yaa houmaa
+    volumes:
+      - postgres_data:/var/lib/postgresql/data  # persiste les données
+    healthcheck:   
+      test: ["CMD-SHELL", "pg_isready -U airflow -d weather_db"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    restart: unless-stopped
+
+  # === Interface graphique pgAdmin ===
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com  # à changer yaa houmaa
+      PGADMIN_DEFAULT_PASSWORD: admin     # à changer yaa houmaa
+    ports:
+      - "5050:80"    
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
