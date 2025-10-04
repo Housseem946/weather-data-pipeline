@@ -4,3 +4,5 @@ dbt-core
 dbt-postgres
 apache-airflow-providers-postgres
 apache-airflow-providers-common-sql
+
+astro-run-dag # This package is needed for the astro run command. It will be removed before a deploy

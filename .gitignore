@@ -16,4 +16,4 @@ remarques.txt
 .idea/
 *.pyc
 *.log
-.docker-compose.overide.yml
+docker-compose.overide.yml

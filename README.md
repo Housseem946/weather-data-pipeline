@@ -1,45 +1,115 @@
-Overview
-========
+## 🌦️ Weather Data Pipeline
 
-Welcome to Astronomer! This project was generated after you ran 'astro dev init' using the Astronomer CLI. This readme describes the contents of the project, as well as how to run Apache Airflow on your local machine.
+Ce projet met en place un pipeline de données automatisé pour collecter, stocker et transformer des données météorologiques en temps réel à partir de l’API Weatherstack
+.
+Il s’appuie sur un stack moderne de Data Engineering :
 
-Project Contents
-================
+- **Airflow** pour l’orchestration
 
-Your Astro project contains the following files and folders:
+- **PostgreSQL** pour le stockage brut
 
-- dags: This folder contains the Python files for your Airflow DAGs. By default, this directory includes one example DAG:
-    - `example_astronauts`: This DAG shows a simple ETL pipeline example that queries the list of astronauts currently in space from the Open Notify API and prints a statement for each astronaut. The DAG uses the TaskFlow API to define tasks in Python, and dynamic task mapping to dynamically print a statement for each astronaut. For more on how this DAG works, see our [Getting started tutorial](https://www.astronomer.io/docs/learn/get-started-with-airflow).
-- Dockerfile: This file contains a versioned Astro Runtime Docker image that provides a differentiated Airflow experience. If you want to execute other commands or overrides at runtime, specify them here.
-- include: This folder contains any additional files that you want to include as part of your project. It is empty by default.
-- packages.txt: Install OS-level packages needed for your project by adding them to this file. It is empty by default.
-- requirements.txt: Install Python packages needed for your project by adding them to this file. It is empty by default.
-- plugins: Add custom or community plugins for your project to this file. It is empty by default.
-- airflow_settings.yaml: Use this local-only file to specify Airflow Connections, Variables, and Pools instead of entering them in the Airflow UI as you develop DAGs in this project.
+- **DBT** pour la transformation et la modélisation des données
 
-Deploy Your Project Locally
-===========================
+- Docker & Docker Compose pour l’environnement isolé et reproductible
 
-Start Airflow on your local machine by running 'astro dev start'.
+L’objectif est de démontrer une architecture complète de Data Pipeline ETL (Extract → Load → Transform) industrialisable.
 
-This command will spin up five Docker containers on your machine, each for a different Airflow component:
+### 🛠️ Stack Technique
 
-- Postgres: Airflow's Metadata Database
-- Scheduler: The Airflow component responsible for monitoring and triggering tasks
-- DAG Processor: The Airflow component responsible for parsing DAGs
-- API Server: The Airflow component responsible for serving the Airflow UI and API
-- Triggerer: The Airflow component responsible for triggering deferred tasks
+- Python 3.12
 
-When all five containers are ready the command will open the browser to the Airflow UI at http://localhost:8080/. You should also be able to access your Postgres Database at 'localhost:5432/postgres' with username 'postgres' and password 'postgres'.
+- Apache Airflow 2.x (via Astronomer CLI)
 
-Note: If you already have either of the above ports allocated, you can either [stop your existing Docker containers or change the port](https://www.astronomer.io/docs/astro/cli/troubleshoot-locally#ports-are-not-available-for-my-local-airflow-webserver).
+- PostgreSQL 14
 
-Deploy Your Project to Astronomer
-=================================
+- pgAdmin 4 (interface SQL)
 
-If you have an Astronomer account, pushing code to a Deployment on Astronomer is simple. For deploying instructions, refer to Astronomer documentation: https://www.astronomer.io/docs/astro/deploy-code/
+- DBT Core + dbt-postgres
 
-Contact
-=======
+- Docker / Docker Compose
 
-The Astronomer CLI is maintained with love by the Astronomer team. To report a bug or suggest a change, reach out to our support.
+### 📂 Structure du projet
+
+weather-data-pipeline/
+│── dags/                     # DAGs Airflow (extraction & orchestration)
+│   ├── extract_weather.py    # Script d’extraction API -> Postgres
+│   ├── extract_weather_dag.py# DAG Airflow qui orchestre l’extraction
+│── include/                  # Scripts auxiliaires Python
+│── plugins/                  # (si besoin de custom operators)
+│── tests/                    # Tests unitaires
+│── dbt_project/              # Projet DBT (modèles + seeds)
+│── docker-compose.override.yml
+│── Dockerfile
+│── requirements.txt
+│── airflow_settings.yaml     # Connexions Airflow
+│── .env                      # Variables d’environnement (API keys, etc.)
+└── README.md
+
+### ⚙️ Installation & Lancement
+
+1️⃣ Cloner le repo
+git clone https://github.com/<ton-user>/weather-data-pipeline.git
+cd weather-data-pipeline
+
+2️⃣ Lancer Docker + Airflow
+astro dev start
+
+Airflow UI sera dispo sur : http://localhost:8080
+
+pgAdmin : http://localhost:5050
+
+### 🔑 Configuration des Variables Airflow
+
+Dans Airflow UI (Admin > Variables) :
+
+WEATHERSTACK_API_KEY → ta clé API Weatherstack
+
+CITIES → liste des villes à suivre (ex dans mon cas : "Paris,London,Madrid")
+
+Dans Admin > Connections :
+
+Connexion postgres_weather → Postgres cible (weather_db)
+
+### 📊 Fonctionnement du Pipeline
+
+- Étape 1 : Extraction (API → Postgres)
+
+Appel de l’API Weatherstack pour chaque ville
+
+Insertion dans la table brute raw_weather au format JSONB
+
+- Étape 2 : Transformation (DBT)
+
+Modélisation en tables analytiques (stg_weather, mart_weather)
+
+Nettoyage des colonnes & historisation des mesures
+
+- Étape 3 : Visualisation (optionnel)
+
+Connexion de Postgres à Grafana / Metabase pour analyser les tendances météo
+
+### 🚀 Exemple d’usage
+
+Lancer manuellement le DAG dans Airflow :
+
+Aller dans Airflow UI → DAGs → extract_weather_dag
+
+Activer puis Trigger DAG
+
+Vérifier l’insertion dans Postgres :
+
+SELECT * FROM raw_weather LIMIT 10;
+
+### 🛣️ Roadmap
+
+ Setup Airflow + Postgres + pgAdmin
+
+ Script d’extraction API → Postgres
+
+ Création du DAG Airflow
+
+ Ajout de transformations DBT
+
+ Dashboard Tableau 
+
+### 👩‍💻 Authored By Me 
