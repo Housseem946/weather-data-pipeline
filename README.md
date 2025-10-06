@@ -30,6 +30,7 @@ L’objectif est de démontrer une architecture complète de Data Pipeline ETL (
 
 ### 📂 Structure du projet
 
+```bash
 weather-data-pipeline/
 │── dags/                     # DAGs Airflow (extraction & orchestration)
 │   ├── extract_weather.py    # Script d’extraction API -> Postgres
@@ -44,16 +45,19 @@ weather-data-pipeline/
 │── airflow_settings.yaml     # Connexions Airflow
 │── .env                      # Variables d’environnement (API keys, etc.)
 └── README.md
-
+```
 ### ⚙️ Installation & Lancement
 
 1️⃣ Cloner le repo
-git clone https://github.com/<ton-user>/weather-data-pipeline.git
+```bash
+git clone https://github.com/Housseem946/weather-data-pipeline.git
 cd weather-data-pipeline
-
+```
 2️⃣ Lancer Docker + Airflow
-astro dev start
 
+```bash
+astro dev start
+```
 Airflow UI sera dispo sur : http://localhost:8080
 
 pgAdmin : http://localhost:5050
@@ -87,29 +91,5 @@ Nettoyage des colonnes & historisation des mesures
 - Étape 3 : Visualisation (optionnel)
 
 Connexion de Postgres à Grafana / Metabase pour analyser les tendances météo
-
-### 🚀 Exemple d’usage
-
-Lancer manuellement le DAG dans Airflow :
-
-Aller dans Airflow UI → DAGs → extract_weather_dag
-
-Activer puis Trigger DAG
-
-Vérifier l’insertion dans Postgres :
-
-SELECT * FROM raw_weather LIMIT 10;
-
-### 🛣️ Roadmap
-
- Setup Airflow + Postgres + pgAdmin
-
- Script d’extraction API → Postgres
-
- Création du DAG Airflow
-
- Ajout de transformations DBT
-
- Dashboard Tableau 
 
 ### 👩‍💻 Authored By Me 
